@@ -1,20 +1,26 @@
 #include "Ball.hpp"
 #include <cmath>
 
+Ball::Ball(Point center, Velocity velocity, Color color, double radius)
+    : m_center(center)
+    , m_velocity(velocity)
+    , m_color(color)
+    , m_radius(radius)
+{}
+
 /**
  * Задает скорость объекта
  * @param velocity новое значение скорости
  */
 void Ball::setVelocity(const Velocity& velocity) {
-    // TODO: место для доработки
+    m_velocity = velocity;
 }
 
 /**
  * @return скорость объекта
  */
 Velocity Ball::getVelocity() const {
-    // TODO: место для доработки
-    return {};
+    return m_velocity;
 }
 
 /**
@@ -26,7 +32,7 @@ Velocity Ball::getVelocity() const {
  * @param painter контекст отрисовки
  */
 void Ball::draw(Painter& painter) const {
-    // TODO: место для доработки
+    painter.draw(getCenter(), getRadius(), m_color);
 }
 
 /**
@@ -34,15 +40,14 @@ void Ball::draw(Painter& painter) const {
  * @param center новый центр объекта
  */
 void Ball::setCenter(const Point& center) {
-    // TODO: место для доработки
+    m_center = center;
 }
 
 /**
  * @return центр объекта
  */
 Point Ball::getCenter() const {
-    // TODO: место для доработки
-    return {};
+    return m_center;
 }
 
 /**
@@ -51,8 +56,7 @@ Point Ball::getCenter() const {
  * не требуется
  */
 double Ball::getRadius() const {
-    // TODO: место для доработки
-    return {};
+    return m_radius;
 }
 
 /**
@@ -63,6 +67,5 @@ double Ball::getRadius() const {
  * эквивалентна объему: PI * radius^3 * 4. / 3.
  */
 double Ball::getMass() const {
-    // TODO: место для доработки
-    return {};
+    return M_PI * std::pow(getRadius(), 3) * (4./ 3.);
 }
