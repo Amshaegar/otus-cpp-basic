@@ -34,7 +34,9 @@ public:
     }
 
     void insert(size_t pos, T value) {
-        checkRange(pos);
+        if (pos > m_size) {
+            throw std::out_of_range("Position out of container");
+        }
 
         Node* new_node = new Node{};
         new_node->data = value;
@@ -51,7 +53,9 @@ public:
     }
 
     void erase(size_t pos) {
-        checkRange(pos);
+        if (pos >= m_size) {
+            throw std::out_of_range("Position out of container");
+        }
 
         Node* nodeToDelete = nullptr;
 
@@ -88,12 +92,6 @@ struct Node {
             iter = iter->next;
         }
         return iter;
-    }
-
-    void checkRange(size_t pos) const {
-        if (pos >= m_size) {
-            throw std::out_of_range("Position out of container");
-        }
     }
 
     size_t m_size{0};

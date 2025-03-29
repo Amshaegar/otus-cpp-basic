@@ -27,7 +27,9 @@ public:
     }
 
     void insert(size_t pos, T value) {
-        checkRange(pos);
+        if (pos > m_size) {
+            throw std::out_of_range("Position out of container");
+        }
 
         T* new_data = new T[m_size + 1];
 
@@ -47,7 +49,9 @@ public:
     }
 
     void erase(size_t pos) {
-        checkRange(pos);
+        if (pos >= m_size) {
+            throw std::out_of_range("Position out of container");
+        }
 
         T* new_data = new T[m_size - 1];
 
@@ -73,12 +77,6 @@ public:
     }
 
 private:
-    void checkRange(size_t pos) const {
-        if (pos >= m_size) {
-            throw std::out_of_range("Position out of container");
-        }
-    }
-
     size_t m_size{0};
     T* m_data{nullptr};
 };
