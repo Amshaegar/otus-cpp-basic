@@ -3,6 +3,8 @@ project(crc32_crack CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
+find_package(Threads REQUIRED)
+
 add_executable(crc32_crack main.cpp
         CRC32.cpp
         CRC32.hpp
@@ -13,4 +15,5 @@ if (MSVC)
     target_compile_options(crc32_crack PUBLIC /W4)
 else ()
     target_compile_options(crc32_crack PUBLIC -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+    target_link_libraries(crc32_crack PUBLIC Threads::Threads)
 endif ()
