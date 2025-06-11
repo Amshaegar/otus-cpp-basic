@@ -50,7 +50,7 @@ std::string tolower(const std::string &str) {
                    std::back_inserter(lower_str),
                    [](unsigned char ch) { return std::tolower(ch); });
     return lower_str;
-};
+}
 
 void count_words(std::istream& stream, Counter& counter) {
     std::for_each(std::istream_iterator<std::string>(stream),
