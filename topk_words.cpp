@@ -8,6 +8,7 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <thread>
 #include <vector>
 #include <chrono>
 
@@ -19,6 +20,10 @@ std::string tolower(const std::string &str);
 
 void count_words(std::istream& stream, Counter&);
 
+void count_words_mt(std::string file, std::pair<Counter, std::string>& result);
+
+void join_dicts(const Counter& input_dict, Counter& sum_dict);
+
 void print_topk(std::ostream& stream, const Counter&, const size_t k);
 
 int main(int argc, char *argv[]) {
@@ -28,15 +33,29 @@ int main(int argc, char *argv[]) {
     }
 
     auto start = std::chrono::high_resolution_clock::now();
+
+    int files_num = argc - 1;
+    std::vector<std::pair<Counter, std::string>> freq_results(files_num);
+
+    std::vector<std::thread> threads;
+    for(int i = 0; i < files_num ; ++i) {
+    threads.emplace_back(std::thread(count_words_mt,
+                                     argv[i+1],
+                                     std::ref(freq_results[i])));
+    }
+
+    for(auto& t : threads) {
+		t.join();
+    }
+
     Counter freq_dict;
-    for (int i = 1; i < argc; ++i) {
-        std::ifstream input{argv[i]};
-        if (!input.is_open()) {
-            std::cerr << "Failed to open file " << argv[i] << '\n';
+	for(auto result : freq_results) {
+        if (!result.second.empty()) {
+            std::cerr << result.second << '\n';
             return EXIT_FAILURE;
         }
-        count_words(input, freq_dict);
-    }
+        join_dicts(result.first, freq_dict);
+	}
 
     print_topk(std::cout, freq_dict, TOPK);
     auto end = std::chrono::high_resolution_clock::now();
@@ -56,6 +75,22 @@ void count_words(std::istream& stream, Counter& counter) {
     std::for_each(std::istream_iterator<std::string>(stream),
                   std::istream_iterator<std::string>(),
                   [&counter](const std::string &s) { ++counter[tolower(s)]; });    
+}
+
+void count_words_mt(std::string file, std::pair<Counter, std::string>& result) {
+
+    std::ifstream input{file};
+    if (!input.is_open()) {
+        result.second = "Failed to open file " + file;
+        return;
+    }
+    count_words(input, result.first);
+}
+
+void join_dicts(const Counter& input_dict, Counter& sum_dict) {
+    for (const auto& [key, value]: input_dict) {
+        sum_dict[key] += value;
+    }
 }
 
 void print_topk(std::ostream& stream, const Counter& counter, const size_t k) {

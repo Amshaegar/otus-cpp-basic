@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 3.8)
 
 project (topk_words CXX)
 
+find_package(Threads REQUIRED)
+
 add_executable(topk_words
     topk_words.cpp
 )
@@ -12,4 +14,5 @@ if (MSVC)
     target_compile_options(topk_words PUBLIC /W4 /WX)
 else()
     target_compile_options(topk_words PUBLIC -Wall -Wextra -Werror -pedantic)
+    target_link_libraries(topk_words PUBLIC Threads::Threads)
 endif()
